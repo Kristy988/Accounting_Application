@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C5CF6A2E-F512-4D34-B474-0C874F713474}</ProjectGuid>
+    <ProjectGuid>{9E31AD67-3905-46B6-8C77-ADF3FAA68020}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>記帳APP</RootNamespace>
-    <AssemblyName>記帳APP</AssemblyName>
+    <RootNamespace>Timer練習</RootNamespace>
+    <AssemblyName>Timer練習</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,13 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CSV">
-      <HintPath>..\..\CSV\CSV\bin\Debug\CSV.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -52,52 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\ComboBoxColumnAttribute.cs" />
-    <Compile Include="Attributes\ImageColumnAttribute.cs" />
-    <Compile Include="Components\Navbar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Components\Navbar.Designer.cs">
-      <DependentUpon>Navbar.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Extension\FormExtension.cs" />
-    <Compile Include="Models\DataModel.cs" />
-    <Compile Include="Models\RecordModel.cs" />
-    <Compile Include="Views\ShowPic.cs">
+    <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Views\ShowPic.Designer.cs">
-      <DependentUpon>ShowPic.cs</DependentUpon>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\SingletonForm.cs" />
-    <Compile Include="Views\圖表分析.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\圖表分析.Designer.cs">
-      <DependentUpon>圖表分析.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\帳務分析.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\帳務分析.Designer.cs">
-      <DependentUpon>帳務分析.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\記一筆.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\記一筆.Designer.cs">
-      <DependentUpon>記一筆.cs</DependentUpon>
-    </Compile>
+    <Compile Include="FormExtension.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\記帳本.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\記帳本.Designer.cs">
-      <DependentUpon>記帳本.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Components\Navbar.resx">
-      <DependentUpon>Navbar.cs</DependentUpon>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -108,22 +67,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Views\ShowPic.resx">
-      <DependentUpon>ShowPic.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\圖表分析.resx">
-      <DependentUpon>圖表分析.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\帳務分析.resx">
-      <DependentUpon>帳務分析.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\記一筆.resx">
-      <DependentUpon>記一筆.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\記帳本.resx">
-      <DependentUpon>記帳本.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36221.1 d17.14
+VisualStudioVersion = 17.14.36221.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "記帳APP", "記帳APP\記帳APP.csproj", "{C5CF6A2E-F512-4D34-B474-0C874F713474}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "反射練習", "反射練習\反射練習.csproj", "{E9B3C46D-839A-442D-8CCD-CC3B1B8D2A0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NEW反射練習", "NEW反射練習\NEW反射練習.csproj", "{CED8DF46-7ACD-443A-BAB9-ADA21C6AED14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timer練習", "Timer練習\Timer練習.csproj", "{9E31AD67-3905-46B6-8C77-ADF3FAA68020}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{C5CF6A2E-F512-4D34-B474-0C874F713474}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5CF6A2E-F512-4D34-B474-0C874F713474}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5CF6A2E-F512-4D34-B474-0C874F713474}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9B3C46D-839A-442D-8CCD-CC3B1B8D2A0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9B3C46D-839A-442D-8CCD-CC3B1B8D2A0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9B3C46D-839A-442D-8CCD-CC3B1B8D2A0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9B3C46D-839A-442D-8CCD-CC3B1B8D2A0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CED8DF46-7ACD-443A-BAB9-ADA21C6AED14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CED8DF46-7ACD-443A-BAB9-ADA21C6AED14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CED8DF46-7ACD-443A-BAB9-ADA21C6AED14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CED8DF46-7ACD-443A-BAB9-ADA21C6AED14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E31AD67-3905-46B6-8C77-ADF3FAA68020}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E31AD67-3905-46B6-8C77-ADF3FAA68020}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E31AD67-3905-46B6-8C77-ADF3FAA68020}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E31AD67-3905-46B6-8C77-ADF3FAA68020}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
