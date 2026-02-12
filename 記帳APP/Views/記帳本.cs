@@ -53,7 +53,6 @@ namespace 記帳APP.Views
                     }
                 }
 
-                //recordData = CSVHelper.Read<RecordModel>(@"C:\Users\krist\Desktop\家教課\記帳APP_資料記載\data.csv");
                 Show_Data();
             }, 400);
 
@@ -65,7 +64,6 @@ namespace 記帳APP.Views
             dataGridView1.Columns.Clear();
             dataGridView1.DataSource = recordData;
 
-            //typeof(RecordModel).GetProperty("Category").GetCustomAttribute<ComboBoxColumnAttribute>();
             PropertyInfo[] theProperty = typeof(RecordModel).GetProperties();
             DataGridViewComboBoxColumn comboBoxColumn;
             DataGridViewImageColumn imageColumn;
@@ -77,7 +75,8 @@ namespace 記帳APP.Views
                 {
                     comboBoxColumn = new DataGridViewComboBoxColumn();
                     comboBoxColumn.HeaderText = name;
-                    comboBoxColumn.Name = name + "comboBox";
+                    comboBoxColumn.Name = propertyName + "_comboBox";
+                    comboBoxColumn.Tag = propertyName;
                     dataGridView1.Columns[propertyName].Visible = false;
                     dataGridView1.Columns.Add(comboBoxColumn);
                 }
@@ -85,7 +84,8 @@ namespace 記帳APP.Views
                 {
                     comboBoxColumn = new DataGridViewComboBoxColumn();
                     comboBoxColumn.HeaderText = name;
-                    comboBoxColumn.Name = name + "comboBox";
+                    comboBoxColumn.Name = propertyName + "_comboBox";
+                    comboBoxColumn.Tag = propertyName;
                     dataGridView1.Columns[propertyName].Visible = false;
                     comboBoxColumn.DataSource = typeof(DataModel).GetProperty(propertyName).GetValue(null);
                     dataGridView1.Columns.Add(comboBoxColumn);
@@ -94,7 +94,8 @@ namespace 記帳APP.Views
                 {
                     imageColumn = new DataGridViewImageColumn();
                     imageColumn.HeaderText = name;
-                    imageColumn.Name = name + "image";
+                    imageColumn.Name = propertyName + "_image";
+                    imageColumn.Tag = propertyName;
                     dataGridView1.Columns[propertyName].Visible = false;
                     imageColumn.ImageLayout = DataGridViewImageCellLayout.Zoom;
                     dataGridView1.Columns.Add(imageColumn);
@@ -102,64 +103,51 @@ namespace 記帳APP.Views
             }
 
 
-            //DataGridViewImageColumn picColumn = new DataGridViewImageColumn();
-            //picColumn.HeaderText = "圖片1";
-            //picColumn.ImageLayout = DataGridViewImageCellLayout.Zoom;
-            //DataGridViewImageColumn picColumn2 = new DataGridViewImageColumn();
-            //picColumn2.HeaderText = "圖片2";
-            //picColumn2.ImageLayout = DataGridViewImageCellLayout.Zoom;
-            //DataGridViewComboBoxColumn comboBoxColumn = new DataGridViewComboBoxColumn();
-            //comboBoxColumn.HeaderText = "分類";
-            //comboBoxColumn.DataSource = DataModel.Category;
-
-            //DataGridViewComboBoxColumn comboBoxColumn2 = new DataGridViewComboBoxColumn();
-            //comboBoxColumn2.HeaderText = "類別";
-            //comboBoxColumn2.DataSource = DataModel.SubCategory[DataModel.Category[0]];
-
-            //DataGridViewComboBoxColumn comboBoxColumn3 = new DataGridViewComboBoxColumn();
-            //comboBoxColumn3.HeaderText = "消費對象";
-            //comboBoxColumn3.DataSource = DataModel.Target;
-
-            //DataGridViewComboBoxColumn comboBoxColumn4 = new DataGridViewComboBoxColumn();
-            //comboBoxColumn4.HeaderText = "支付方式";
-            //comboBoxColumn4.DataSource = DataModel.Payment;
 
             DataGridViewImageColumn delpicColumn = new DataGridViewImageColumn();
             delpicColumn.HeaderText = "刪除";
             delpicColumn.ImageLayout = DataGridViewImageCellLayout.Zoom;
+            delpicColumn.Name = "Delete";
+            delpicColumn.DefaultCellStyle = new DataGridViewCellStyle()
+            {
+                NullValue = new Bitmap(@"C:\Users\krist\Desktop\家教課\記帳APP\垃圾桶.png")
+            };
+            //DefaultCellStyle 預設儲存格樣式
+            //NullValue 沒有圖片時，給的預設值
 
-            //dataGridView1.Columns.Add(comboBoxColumn);
-            //dataGridView1.Columns.Add(comboBoxColumn2);
-            //dataGridView1.Columns.Add(comboBoxColumn3);
-            //dataGridView1.Columns.Add(comboBoxColumn4);
-            //dataGridView1.Columns.Add(picColumn);
-            //dataGridView1.Columns.Add(picColumn2);
             dataGridView1.Columns.Add(delpicColumn);
-
-            //dataGridView1.Columns[2].Visible = false;
-            //dataGridView1.Columns[3].Visible = false;
-            //dataGridView1.Columns[4].Visible = false;
-            //dataGridView1.Columns[5].Visible = false;
-            //dataGridView1.Columns[6].Visible = false;
-            //dataGridView1.Columns[7].Visible = false;
-
 
             for (int i = 0; i < recordData.Count; i++)
             {
-                dataGridView1.Rows[i].Cells[12].Dispose();
-                dataGridView1.Rows[i].Cells[13].Dispose();
-                GC.Collect();
+                //方法1 cells中找出所有的comboBox
+                //dataGridView1.Rows[i].Cells.OfType<DataGridViewComboBoxCell>()
+                //    .ToList()
+                //    .ForEach(x=>x.OwningColumn.Tag)
 
-                DataGridViewComboBoxCell cell9 = (DataGridViewComboBoxCell)dataGridView1.Rows[i].Cells[9];
-                cell9.DataSource = DataModel.Subcategory[(string)dataGridView1.Rows[i].Cells[2].Value];
+                //方法2  從RecordModel反找所有屬性
 
-                dataGridView1.Rows[i].Cells[8].Value = dataGridView1.Rows[i].Cells[2].Value;
-                dataGridView1.Rows[i].Cells[9].Value = dataGridView1.Rows[i].Cells[3].Value;
-                dataGridView1.Rows[i].Cells[10].Value = dataGridView1.Rows[i].Cells[4].Value;
-                dataGridView1.Rows[i].Cells[11].Value = dataGridView1.Rows[i].Cells[5].Value;
-                dataGridView1.Rows[i].Cells[12].Value = new Bitmap(recordData[i].Picture1);
-                dataGridView1.Rows[i].Cells[13].Value = new Bitmap(recordData[i].Picture2);
-                dataGridView1.Rows[i].Cells[14].Value = new Bitmap(@"C:\Users\krist\Desktop\家教課\記帳APP\垃圾桶.png");
+                DataGridViewComboBoxCell cell9 = (DataGridViewComboBoxCell)dataGridView1.Rows[i].Cells["Subcategory_comboBox"];
+                cell9.DataSource = DataModel.Subcategory[(string)dataGridView1.Rows[i].Cells["Category"].Value];
+
+                typeof(RecordModel).GetProperties().Where(x =>
+                x.GetCustomAttribute<ComboBoxColumnAttribute>() != null ||
+                x.GetCustomAttribute<ImageColumnAttribute>() != null)
+                    .ToList()
+                    .ForEach(x =>
+                    {
+                        if (x.GetCustomAttribute<ComboBoxColumnAttribute>() is ComboBoxColumnAttribute comboBoxAttribute)
+                        {
+                            dataGridView1.Rows[i].Cells[$"{x.Name}_comboBox"].Value = dataGridView1.Rows[i].Cells[x.Name].Value;
+
+                        }
+                        if (x.GetCustomAttribute<ImageColumnAttribute>() is ImageColumnAttribute imageColumnAttribute)
+                        {
+                            dataGridView1.Rows[i].Cells[$"{x.Name}_image"].Dispose();
+                            GC.Collect();
+                            dataGridView1.Rows[i].Cells[$"{x.Name}_image"].Value = new Bitmap(x.GetValue(recordData[i]).ToString());
+
+                        }
+                    });
 
             }
         }
@@ -169,11 +157,7 @@ namespace 記帳APP.Views
             int col = e.ColumnIndex;
             int row = e.RowIndex;
             string path = "";
-            //if (dataGridView1.Rows[row].Cells[col] is DataGridViewImageCell imageCell)
-            //{
-            //    ShowPic showPic = new ShowPic((Bitmap)imageCell.Value);
-            //    showPic.Show();
-            //}
+
             if (col == 12)
             {
                 path = (string)dataGridView1.Rows[row].Cells[6].Value;
@@ -289,7 +273,6 @@ namespace 記帳APP.Views
             if (this.dataGridView1.IsCurrentCellDirty && this.dataGridView1.CurrentCell is DataGridViewComboBoxCell)
             {
                 this.dataGridView1.EndEdit();
-                //  dataGridView1.CommitEdit(DataGridViewDataErrorContexts.Commit);
             }
         }
 
