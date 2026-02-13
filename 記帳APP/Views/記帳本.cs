@@ -119,35 +119,48 @@ namespace 記帳APP.Views
 
             for (int i = 0; i < recordData.Count; i++)
             {
-                //方法1 cells中找出所有的comboBox
-                //dataGridView1.Rows[i].Cells.OfType<DataGridViewComboBoxCell>()
-                //    .ToList()
-                //    .ForEach(x=>x.OwningColumn.Tag)
-
-                //方法2  從RecordModel反找所有屬性
-
                 DataGridViewComboBoxCell cell9 = (DataGridViewComboBoxCell)dataGridView1.Rows[i].Cells["Subcategory_comboBox"];
                 cell9.DataSource = DataModel.Subcategory[(string)dataGridView1.Rows[i].Cells["Category"].Value];
 
-                typeof(RecordModel).GetProperties().Where(x =>
-                x.GetCustomAttribute<ComboBoxColumnAttribute>() != null ||
-                x.GetCustomAttribute<ImageColumnAttribute>() != null)
+                //方法1 cells中找出所有的comboBox
+                dataGridView1.Rows[i].Cells.OfType<DataGridViewComboBoxCell>()
                     .ToList()
                     .ForEach(x =>
                     {
-                        if (x.GetCustomAttribute<ComboBoxColumnAttribute>() is ComboBoxColumnAttribute comboBoxAttribute)
+                        dataGridView1.Rows[i].Cells[x.OwningColumn.Name].Value = dataGridView1.Rows[i].Cells[x.OwningColumn.Tag.ToString()].Value;
+                    });
+                dataGridView1.Rows[i].Cells.OfType<DataGridViewImageCell>()
+                    .ToList()
+                    .ForEach(x =>
+                    {
+                        if (x.OwningColumn.Name != "Delete")
                         {
-                            dataGridView1.Rows[i].Cells[$"{x.Name}_comboBox"].Value = dataGridView1.Rows[i].Cells[x.Name].Value;
-
-                        }
-                        if (x.GetCustomAttribute<ImageColumnAttribute>() is ImageColumnAttribute imageColumnAttribute)
-                        {
-                            dataGridView1.Rows[i].Cells[$"{x.Name}_image"].Dispose();
+                            dataGridView1.Rows[i].Cells[x.OwningColumn.Name].Dispose();
                             GC.Collect();
-                            dataGridView1.Rows[i].Cells[$"{x.Name}_image"].Value = new Bitmap(x.GetValue(recordData[i]).ToString());
-
+                            dataGridView1.Rows[i].Cells[x.OwningColumn.Name].Value = new Bitmap(dataGridView1.Rows[i].Cells[x.OwningColumn.Tag.ToString()].Value.ToString());
                         }
                     });
+
+                //方法2  從RecordModel反找所有屬性
+                //typeof(RecordModel).GetProperties().Where(x =>
+                //x.GetCustomAttribute<ComboBoxColumnAttribute>() != null ||
+                //x.GetCustomAttribute<ImageColumnAttribute>() != null)
+                //    .ToList()
+                //    .ForEach(x =>
+                //    {
+                //        if (x.GetCustomAttribute<ComboBoxColumnAttribute>() is ComboBoxColumnAttribute comboBoxAttribute)
+                //        {
+                //            dataGridView1.Rows[i].Cells[$"{x.Name}_comboBox"].Value = dataGridView1.Rows[i].Cells[x.Name].Value;
+
+                //        }
+                //        if (x.GetCustomAttribute<ImageColumnAttribute>() is ImageColumnAttribute imageColumnAttribute)
+                //        {
+                //            dataGridView1.Rows[i].Cells[$"{x.Name}_image"].Dispose();
+                //            GC.Collect();
+                //            dataGridView1.Rows[i].Cells[$"{x.Name}_image"].Value = new Bitmap(x.GetValue(recordData[i]).ToString());
+
+                //        }
+                //    });
 
             }
         }
