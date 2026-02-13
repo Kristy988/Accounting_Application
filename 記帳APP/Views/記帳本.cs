@@ -82,6 +82,7 @@ namespace 記帳APP.Views
                 }
                 if (theProperty[i].GetCustomAttribute<ComboBoxColumnAttribute>() != null && propertyName != "Subcategory")
                 {
+                    //datagridview.CreateComboBoxColumn(property);
                     comboBoxColumn = new DataGridViewComboBoxColumn();
                     comboBoxColumn.HeaderText = name;
                     comboBoxColumn.Name = propertyName + "_comboBox";
@@ -169,56 +170,42 @@ namespace 記帳APP.Views
         {
             int col = e.ColumnIndex;
             int row = e.RowIndex;
-            string path = "";
 
-            if (col == 12)
+            if (dataGridView1.Rows[row].Cells[col] is DataGridViewImageCell imageColumn && imageColumn.OwningColumn.Name != "Delete")
             {
-                path = (string)dataGridView1.Rows[row].Cells[6].Value;
+                string path = dataGridView1.Rows[row].Cells[imageColumn.OwningColumn.Tag.ToString()].Value.ToString();
                 ShowPic showPic = new ShowPic(path);
                 showPic.Show();
-            }
-            if (col == 13)
-            {
-                path = (string)dataGridView1.Rows[row].Cells[7].Value;
-                ShowPic showPic = new ShowPic(path);
-                showPic.Show();
-
             }
 
             //刪除
-            if (col == 14)
+            if (dataGridView1.Rows[row].Cells[col] is DataGridViewImageCell deleteColumn && deleteColumn.OwningColumn.Name == "Delete")
             {
-                Image p1 = (Image)dataGridView1.Rows[row].Cells[12].Value;
-                Image p2 = (Image)dataGridView1.Rows[row].Cells[13].Value;
-                p1.Dispose();
-                p2.Dispose();
-                GC.Collect();
-
-                string date = dataGridView1.Rows[row].Cells[0].Value.ToString();
+                string date = dataGridView1.Rows[row].Cells["Date"].Value.ToString();
+                dataGridView1.Rows[row].Cells.OfType<DataGridViewImageCell>()
+                    .ToList()
+                    .ForEach(x =>
+                    {
+                        Image pic = (Image)dataGridView1.Rows[row].Cells[x.OwningColumn.Name].Value;
+                        if (pic == null)
+                            return;
+                        pic.Dispose();
+                        GC.Collect();
+                        string picPath = dataGridView1.Rows[row].Cells[x.OwningColumn.Tag.ToString()].Value.ToString();
+                        string picPath_origin = picPath.Replace("small_" + date, date);
+                        File.Delete(picPath);
+                        File.Delete(picPath_origin);
+                    }
+                    );
 
 
                 dataGridView1.DataSource = null;
-                string pic1 = recordData[row].Picture1;
-                string pic2 = recordData[row].Picture2;
-
                 recordData.RemoveAt(row);
                 dataGridView1.Columns.Clear();
-
-
-                File.Delete(pic1);
-                File.Delete(pic2);
                 File.Delete($@"C:\Users\krist\Desktop\家教課\記帳APP_資料記載\{date}\data.csv");
-
                 Show_Data();
 
-
                 List<RecordModel> newRecord = recordData.Where(x => x.Date == date).ToList();
-                string pic1_origin = pic1.Replace("small_" + date, date);
-                string pic2_origin = pic2.Replace("small_" + date, date);
-                File.Delete(pic1_origin);
-                File.Delete(pic2_origin);
-
-
                 if (newRecord.Count > 0)
                 {
                     CSVHelper.Write($@"C:\Users\krist\Desktop\家教課\記帳APP_資料記載\{date}\data.csv", newRecord);
@@ -227,7 +214,6 @@ namespace 記帳APP.Views
                 {
                     Directory.Delete($@"C:\Users\krist\Desktop\家教課\記帳APP_資料記載\{date}");
                 }
-
             }
         }
 
@@ -235,37 +221,33 @@ namespace 記帳APP.Views
         {
             int col = e.ColumnIndex;
             int row = e.RowIndex;
+            string date = dataGridView1.Rows[row].Cells["Date"].Value.ToString();
 
+            if (dataGridView1.Rows[row].Cells[col] is DataGridViewTextBoxCell textBoxCell && textBoxCell.OwningColumn.Name == "Price")
+            {
+                recordData[row].Price = dataGridView1.Rows[row].Cells["Price"].Value.ToString();
+            }
+            
 
-            string date = dataGridView1.Rows[row].Cells[0].Value.ToString();
+            if (dataGridView1.Rows[row].Cells[col] is DataGridViewComboBoxCell ComboBoxCell)
+            {
+                if (ComboBoxCell.OwningColumn.Tag.ToString() == "Category")
+                {
+                    recordData[row].Category = dataGridView1.Rows[row].Cells[ComboBoxCell.OwningColumn.Name].Value.ToString();
 
-            if (col == 1)
-            {
-                recordData[row].Price = dataGridView1.Rows[row].Cells[1].Value.ToString();
-            }
-            if (col == 8)
-            {
-                recordData[row].Category = dataGridView1.Rows[row].Cells[8].Value.ToString();
+                    List<string> newData = DataModel.Subcategory[(string)dataGridView1.Rows[row].Cells[ComboBoxCell.OwningColumn.Name].Value];
+                    recordData[row].Subcategory = newData[0].ToString();
+                    DataGridViewComboBoxCell subCategoryCell = (DataGridViewComboBoxCell)dataGridView1.Rows[row].Cells["Subcategory_comboBox"];
+                    subCategoryCell.DataSource = newData;
+                    dataGridView1.Rows[row].Cells["Subcategory_comboBox"].Value = newData[0].ToString();
+                    return;
+                }
 
-                List<string> newData = DataModel.Subcategory[(string)dataGridView1.Rows[row].Cells[8].Value];
-                recordData[row].Subcategory = newData[0].ToString();
-                DataGridViewComboBoxCell subCategoryCell = (DataGridViewComboBoxCell)dataGridView1.Rows[row].Cells[9];
-                subCategoryCell.DataSource = newData;
-                dataGridView1.Rows[row].Cells[9].Value = newData[0].ToString();
-            }
-            if (col == 9)
-            {
-                recordData[row].Subcategory = dataGridView1.Rows[row].Cells[9].Value.ToString();
-            }
-            if (col == 10)
-            {
-                recordData[row].Target = dataGridView1.Rows[row].Cells[10].Value.ToString();
-            }
-            if (col == 11)
-            {
-                recordData[row].Payment = dataGridView1.Rows[row].Cells[11].Value.ToString();
-            }
+                typeof(RecordModel).GetProperty(ComboBoxCell.OwningColumn.Tag.ToString())
+                    .SetValue(recordData[row], dataGridView1.Rows[row].Cells[ComboBoxCell.OwningColumn.Name].Value);
 
+            }
+            
             File.Delete($@"C:\Users\krist\Desktop\家教課\記帳APP_資料記載\{date}\data.csv");
             List<RecordModel> newRecord = recordData.Where(x => x.Date == date).ToList();
 
