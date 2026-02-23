@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -18,6 +19,9 @@ namespace 記帳APP.Views
 {
     public partial class 記一筆 : Form
     {
+        string directoryPath = ConfigurationManager.AppSettings["DirectoryPath"];
+        string upPicPath = ConfigurationManager.AppSettings["UploadPath"];
+
         public 記一筆()
         {
             InitializeComponent();
@@ -29,8 +33,8 @@ namespace 記帳APP.Views
             subType_ComboBox.DataSource = DataModel.Subcategory[DataModel.Category[0]];
             targets_ComboBox.DataSource = DataModel.Target;
             payment_ComboBox.DataSource = DataModel.Payment;
-            pictureBox1.Image = Image.FromFile(@"C:\Users\krist\Desktop\家教課\記帳APP\上傳圖片.png");
-            pictureBox2.Image = Image.FromFile(@"C:\Users\krist\Desktop\家教課\記帳APP\上傳圖片.png");
+            pictureBox1.Image = Image.FromFile(upPicPath);
+            pictureBox2.Image = Image.FromFile(upPicPath);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
         }
@@ -40,8 +44,8 @@ namespace 記帳APP.Views
             subType_ComboBox.DataSource = DataModel.Subcategory[type_ComboBox.Text];
 
         }
-        private string imagePath1 = "C:\\Users\\krist\\Desktop\\家教課\\記帳APP\\上傳圖片.png";
-        private string imagePath2 = "C:\\Users\\krist\\Desktop\\家教課\\記帳APP\\上傳圖片.png";
+        private string imagePath1 = ConfigurationManager.AppSettings["UploadPath"];
+        private string imagePath2 = ConfigurationManager.AppSettings["UploadPath"];
         private void ImageUpload_Click(object sender, EventArgs e)
         {
 
@@ -77,7 +81,7 @@ namespace 記帳APP.Views
             data.Picture1 = imagePath1;
             data.Picture2 = imagePath2;
 
-            string folderPath = $@"C:\Users\krist\Desktop\家教課\記帳APP_資料記載\{data.Date}";
+            string folderPath = Path.Combine(directoryPath, data.Date);
 
             if (!Directory.Exists(folderPath))
             {
@@ -86,7 +90,7 @@ namespace 記帳APP.Views
 
 
             string pic1Guid = Guid.NewGuid().ToString();
-            string pic1 = $"C:\\Users\\krist\\Desktop\\家教課\\記帳APP_資料記載\\{data.Date}\\{data.Date + pic1Guid}.png";
+            string pic1 = Path.Combine(directoryPath, data.Date, data.Date + pic1Guid + ".png");
             using (Bitmap bmp1 = new Bitmap(pictureBox1.Image))
             {
                 ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
@@ -119,12 +123,13 @@ namespace 記帳APP.Views
             {
                 g.DrawImage(originalImage, 0, 0, newWidth, newHeight);
             }
-            resizedImage.Save($"C:\\Users\\krist\\Desktop\\家教課\\記帳APP_資料記載\\{data.Date}\\small_{data.Date + pic1Guid}.png", ImageFormat.Jpeg);
-            data.Picture1 = $"C:\\Users\\krist\\Desktop\\家教課\\記帳APP_資料記載\\{data.Date}\\small_{data.Date + pic1Guid}.png";
+
+            resizedImage.Save(Path.Combine(directoryPath, data.Date, "small_" + data.Date + pic1Guid + ".png"), ImageFormat.Jpeg);
+            data.Picture1 = Path.Combine(directoryPath, data.Date, "small_" + data.Date + pic1Guid + ".png");
 
 
             string pic2Guid = Guid.NewGuid().ToString();
-            string pic2 = $"C:\\Users\\krist\\Desktop\\家教課\\記帳APP_資料記載\\{data.Date}\\{data.Date + pic2Guid}.png";
+            string pic2 = Path.Combine(directoryPath, data.Date, data.Date + pic2Guid + ".png");
             using (Bitmap bmp1 = new Bitmap(pictureBox2.Image))
             {
                 ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
@@ -156,28 +161,24 @@ namespace 記帳APP.Views
             {
                 g.DrawImage(originalImage2, 0, 0, newWidth2, newHeight2);
             }
-            resizedImage2.Save($"C:\\Users\\krist\\Desktop\\家教課\\記帳APP_資料記載\\{data.Date}\\small_{data.Date + pic2Guid}.png", ImageFormat.Jpeg);
-            data.Picture2 = $"C:\\Users\\krist\\Desktop\\家教課\\記帳APP_資料記載\\{data.Date}\\small_{data.Date + pic2Guid}.png";
+            resizedImage2.Save(Path.Combine(directoryPath, data.Date, "small_" + data.Date + pic2Guid + ".png"), ImageFormat.Jpeg);
+            data.Picture2 = Path.Combine(directoryPath, data.Date, "small_" + data.Date + pic2Guid + ".png");
 
 
-            CSVHelper.Write($@"C:\Users\krist\Desktop\家教課\記帳APP_資料記載\{data.Date}\data.csv", data);
+            CSVHelper.Write(Path.Combine(directoryPath, data.Date, "data.csv"), data);
 
             MessageBox.Show("新增成功");
             pictureBox1.Image.Dispose();
             pictureBox2.Image.Dispose();
             GC.Collect();
 
-            pictureBox1.Image = Image.FromFile(@"C:\Users\krist\Desktop\家教課\記帳APP\上傳圖片.png");
-            pictureBox2.Image = Image.FromFile(@"C:\Users\krist\Desktop\家教課\記帳APP\上傳圖片.png");
-            imagePath1 = "C:\\Users\\krist\\Desktop\\家教課\\記帳APP\\上傳圖片.png";
-            imagePath2 = "C:\\Users\\krist\\Desktop\\家教課\\記帳APP\\上傳圖片.png";
+            pictureBox1.Image = Image.FromFile(upPicPath);
+            pictureBox2.Image = Image.FromFile(upPicPath);
+            imagePath1 = upPicPath;
+            imagePath2 = upPicPath;
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            List<RecordModel> records = CSVHelper.Read<RecordModel>(@"C:\Users\krist\Desktop\家教課\記帳APP_資料記載\data.csv");
 
-        }
         private T SetValue<T>(string rawData) where T : class, new()
         {
             T t = new T();

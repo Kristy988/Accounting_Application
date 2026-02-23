@@ -76,7 +76,6 @@
             this.fromDatePicker.Name = "fromDatePicker";
             this.fromDatePicker.Size = new System.Drawing.Size(200, 22);
             this.fromDatePicker.TabIndex = 3;
-            this.fromDatePicker.ValueChanged += new System.EventHandler(this.fromDatePicker_ValueChanged);
             // 
             // toDatePicker
             // 
@@ -93,7 +92,6 @@
             this.TimeFromLabel.Size = new System.Drawing.Size(30, 12);
             this.TimeFromLabel.TabIndex = 5;
             this.TimeFromLabel.Text = "From";
-            this.TimeFromLabel.Click += new System.EventHandler(this.label1_Click);
             // 
             // TimeToLabel
             // 
@@ -118,7 +116,6 @@
             this.Controls.Add(this.navbar1);
             this.Name = "記帳本";
             this.Text = "記帳本";
-            this.Load += new System.EventHandler(this.記帳本_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
