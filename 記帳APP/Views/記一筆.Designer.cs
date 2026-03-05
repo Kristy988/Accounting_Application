@@ -250,7 +250,6 @@
             this.Controls.Add(this.navbar1);
             this.Name = "記一筆";
             this.Text = "記一筆";
-            this.Load += new System.EventHandler(this.記一筆_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);

@@ -125,6 +125,7 @@ namespace 記帳APP.Views
                 string path = dataGridView1.Rows[row].Cells[imageColumn.OwningColumn.Tag.ToString()].Value.ToString();
                 ShowPic showPic = new ShowPic(path);
                 showPic.Show();
+
             }
 
             //刪除
@@ -151,10 +152,13 @@ namespace 記帳APP.Views
                 dataGridView1.DataSource = null;
                 recordData.RemoveAt(row);
                 dataGridView1.Columns.Clear();
+
                 File.Delete(Path.Combine(directoryPath, date, "data.csv"));
+
                 Show_Data();
 
                 List<RecordModel> newRecord = recordData.Where(x => x.Date == date).ToList();
+
                 if (newRecord.Count > 0)
                 {
                     CSVHelper.Write(Path.Combine(directoryPath, date, "data.csv"), newRecord);
@@ -181,13 +185,13 @@ namespace 記帳APP.Views
                 dataGridView1.Rows[row].Cells["Subcategory_comboBox"].Value = newData[0].ToString();
             }
 
-            File.Delete(Path.Combine(directoryPath, date, "data.csv"));
-            List<RecordModel> newRecord = recordData.Where(x => x.Date == date).ToList();
+            //File.Delete(Path.Combine(directoryPath, date, "data.csv"));
+            //List<RecordModel> newRecord = recordData.Where(x => x.Date == date).ToList();
 
-            if (newRecord.Count > 0)
-            {
-                CSVHelper.Write(Path.Combine(directoryPath, date, "data.csv"), newRecord);
-            }
+            //if (newRecord.Count > 0)
+            //{
+            //    CSVHelper.Write(Path.Combine(directoryPath, date, "data.csv"), newRecord);
+            //}
 
         }
 
