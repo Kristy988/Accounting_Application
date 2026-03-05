@@ -14,25 +14,29 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using 記帳APP.Models;
+using 記帳APP.Models.DTOs;
+using 記帳APP.Presenter;
+using static 記帳APP.Contract.AddRecordContract;
 
 namespace 記帳APP.Views
 {
-    public partial class 記一筆 : Form
+    public partial class 記一筆 : Form, IAddRecordView
     {
         string directoryPath = ConfigurationManager.AppSettings["DirectoryPath"];
         string upPicPath = ConfigurationManager.AppSettings["UploadPath"];
-
+        IAddRecordPresenter addRecordPresenter;
         public 記一筆()
         {
             InitializeComponent();
+            addRecordPresenter = new AddRecordPresenter(this);
+            addRecordPresenter.GetComboBoxData();
         }
-
-        private void 記一筆_Load(object sender, EventArgs e)
+        void IAddRecordView.GetComboBoxDataResponse(DataDTO dataDTO)
         {
-            type_ComboBox.DataSource = DataModel.Category;
-            subType_ComboBox.DataSource = DataModel.Subcategory[DataModel.Category[0]];
-            targets_ComboBox.DataSource = DataModel.Target;
-            payment_ComboBox.DataSource = DataModel.Payment;
+            type_ComboBox.DataSource = dataDTO.Category;
+            subType_ComboBox.DataSource = dataDTO.Subcategory[dataDTO.Category[0]];
+            targets_ComboBox.DataSource = dataDTO.Target;
+            payment_ComboBox.DataSource = dataDTO.Payment;
             pictureBox1.Image = Image.FromFile(upPicPath);
             pictureBox2.Image = Image.FromFile(upPicPath);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -41,9 +45,14 @@ namespace 記帳APP.Views
 
         private void type_ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            subType_ComboBox.DataSource = DataModel.Subcategory[type_ComboBox.Text];
+            addRecordPresenter.ChangeSubcatComboBox(type_ComboBox.Text);
 
         }
+        public void GetSubcatComboBoxResponse(List<string> Subcates)
+        {
+            subType_ComboBox.DataSource = Subcates;
+        }
+
         private string imagePath1 = ConfigurationManager.AppSettings["UploadPath"];
         private string imagePath2 = ConfigurationManager.AppSettings["UploadPath"];
         private void ImageUpload_Click(object sender, EventArgs e)
@@ -71,102 +80,16 @@ namespace 記帳APP.Views
 
         private void button1_Click(object sender, EventArgs e)
         {
-            RecordModel data = new RecordModel();
+            RecordDTO data = new RecordDTO();
             data.Date = dateTimePicker1.Value.ToString("yyyy-MM-dd");
             data.Price = price_TextBox.Text;
             data.Category = type_ComboBox.Text;
             data.Subcategory = subType_ComboBox.Text;
             data.Target = targets_ComboBox.Text;
             data.Payment = payment_ComboBox.Text;
-            data.Picture1 = imagePath1;
-            data.Picture2 = imagePath2;
-
-            string folderPath = Path.Combine(directoryPath, data.Date);
-
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-
-
-            string pic1Guid = Guid.NewGuid().ToString();
-            string pic1 = Path.Combine(directoryPath, data.Date, data.Date + pic1Guid + ".png");
-            using (Bitmap bmp1 = new Bitmap(pictureBox1.Image))
-            {
-                ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
-
-                // Create an Encoder object based on the GUID  
-                // for the Quality parameter category.  
-                System.Drawing.Imaging.Encoder myEncoder =
-                    System.Drawing.Imaging.Encoder.Quality;
-
-                // Create an EncoderParameters object.  
-                // An EncoderParameters object has an array of EncoderParameter  
-                // objects. In this case, there is only one  
-                // EncoderParameter object in the array.  
-                EncoderParameters myEncoderParameters = new EncoderParameters(1);
-
-                EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 15L);//品質0到100分的中間值50分
-                myEncoderParameters.Param[0] = myEncoderParameter;
-                bmp1.Save(pic1, jpgEncoder, myEncoderParameters);
-
-            }
-
-            Bitmap originalImage = new Bitmap(pictureBox1.Image);
-
-            int newWidth = 40;
-            int newHeight = 40;
-
-            Bitmap resizedImage = new Bitmap(newWidth, newHeight);
-
-            using (Graphics g = Graphics.FromImage(resizedImage))
-            {
-                g.DrawImage(originalImage, 0, 0, newWidth, newHeight);
-            }
-
-            resizedImage.Save(Path.Combine(directoryPath, data.Date, "small_" + data.Date + pic1Guid + ".png"), ImageFormat.Jpeg);
-            data.Picture1 = Path.Combine(directoryPath, data.Date, "small_" + data.Date + pic1Guid + ".png");
-
-
-            string pic2Guid = Guid.NewGuid().ToString();
-            string pic2 = Path.Combine(directoryPath, data.Date, data.Date + pic2Guid + ".png");
-            using (Bitmap bmp1 = new Bitmap(pictureBox2.Image))
-            {
-                ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
-
-                // Create an Encoder object based on the GUID  
-                // for the Quality parameter category.  
-                System.Drawing.Imaging.Encoder myEncoder =
-                    System.Drawing.Imaging.Encoder.Quality;
-
-                // Create an EncoderParameters object.  
-                // An EncoderParameters object has an array of EncoderParameter  
-                // objects. In this case, there is only one  
-                // EncoderParameter object in the array.  
-                EncoderParameters myEncoderParameters = new EncoderParameters(1);
-
-                EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 15L);//品質0到100分的中間值50分
-                myEncoderParameters.Param[0] = myEncoderParameter;
-                bmp1.Save(pic2, jpgEncoder, myEncoderParameters);
-
-            }
-            Bitmap originalImage2 = new Bitmap(pictureBox2.Image);
-
-            int newWidth2 = 40;
-            int newHeight2 = 40;
-
-            Bitmap resizedImage2 = new Bitmap(newWidth2, newHeight2);
-
-            using (Graphics g = Graphics.FromImage(resizedImage2))
-            {
-                g.DrawImage(originalImage2, 0, 0, newWidth2, newHeight2);
-            }
-            resizedImage2.Save(Path.Combine(directoryPath, data.Date, "small_" + data.Date + pic2Guid + ".png"), ImageFormat.Jpeg);
-            data.Picture2 = Path.Combine(directoryPath, data.Date, "small_" + data.Date + pic2Guid + ".png");
-
-
-            CSVHelper.Write(Path.Combine(directoryPath, data.Date, "data.csv"), data);
-
+            data.Picture1 = pictureBox1.Image;
+            data.Picture2 = pictureBox2.Image;
+            addRecordPresenter.CreateRecord(data);
             MessageBox.Show("新增成功");
             pictureBox1.Image.Dispose();
             pictureBox2.Image.Dispose();
@@ -178,31 +101,6 @@ namespace 記帳APP.Views
             imagePath2 = upPicPath;
         }
 
-
-        private T SetValue<T>(string rawData) where T : class, new()
-        {
-            T t = new T();
-            PropertyInfo[] props = t.GetType().GetProperties();
-            string[] datas = rawData.Split(',');
-
-            for (int i = 0; i < props.Length; i++)
-            {
-                props[i].SetValue(t, datas[i]);
-            }
-            return t;
-        }
-
-        private ImageCodecInfo GetEncoder(ImageFormat format)
-        {
-            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
-            foreach (ImageCodecInfo codec in codecs)
-            {
-                if (codec.FormatID == format.Guid)
-                {
-                    return codec;
-                }
-            }
-            return null;
-        }
     }
+
 }

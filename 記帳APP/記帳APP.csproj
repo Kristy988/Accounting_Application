@@ -61,10 +61,21 @@
     <Compile Include="Components\Navbar.Designer.cs">
       <DependentUpon>Navbar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Contract\AddRecordContract.cs" />
     <Compile Include="Extension\DataGridViewExtension.cs" />
     <Compile Include="Extension\FormExtension.cs" />
     <Compile Include="Models\DataModel.cs" />
+    <Compile Include="Models\DTOs\DataDTO.cs" />
+    <Compile Include="Models\DTOs\RecordDTO.cs" />
+    <Compile Include="Presenter\AddRecordPresenter.cs" />
+    <Compile Include="Repository\DataRepository.cs" />
+    <Compile Include="Repository\IDataRepository.cs" />
+    <Compile Include="Repository\Model\DataDAO.cs" />
+    <Compile Include="Repository\Model\RecordDAO.cs" />
     <Compile Include="Models\RecordModel.cs" />
+    <Compile Include="Repository\IRecordRepository.cs" />
+    <Compile Include="Repository\RecordRepository.cs" />
+    <Compile Include="Utility\ImageCompress.cs" />
     <Compile Include="Views\ShowPic.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -139,5 +150,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
