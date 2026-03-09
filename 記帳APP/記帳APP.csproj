@@ -62,11 +62,14 @@
       <DependentUpon>Navbar.cs</DependentUpon>
     </Compile>
     <Compile Include="Contract\AddRecordContract.cs" />
+    <Compile Include="Contract\AccountBookContract.cs" />
     <Compile Include="Extension\DataGridViewExtension.cs" />
     <Compile Include="Extension\FormExtension.cs" />
     <Compile Include="Models\DataModel.cs" />
+    <Compile Include="Models\DTOs\AccountBookDTO.cs" />
     <Compile Include="Models\DTOs\DataDTO.cs" />
     <Compile Include="Models\DTOs\RecordDTO.cs" />
+    <Compile Include="Presenter\AccountBookPresenter.cs" />
     <Compile Include="Presenter\AddRecordPresenter.cs" />
     <Compile Include="Repository\DataRepository.cs" />
     <Compile Include="Repository\IDataRepository.cs" />

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using 記帳APP.Views;
@@ -22,6 +24,7 @@ namespace 記帳APP
     //}
     internal static class Program
     {
+        public static string DirectoryPath = ConfigurationManager.AppSettings["DirectoryPath"];
         /// <summary>
         /// 應用程式的主要進入點。
         /// </summary>
@@ -40,9 +43,6 @@ namespace 記帳APP
             //{
 
             //}
-
-
-
 
 
             Application.EnableVisualStyles();

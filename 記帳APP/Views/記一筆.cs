@@ -22,8 +22,8 @@ namespace 記帳APP.Views
 {
     public partial class 記一筆 : Form, IAddRecordView
     {
-        string directoryPath = ConfigurationManager.AppSettings["DirectoryPath"];
-        string upPicPath = ConfigurationManager.AppSettings["UploadPath"];
+        private string imagePath1 = ConfigurationManager.AppSettings["UploadPath"];
+        private string imagePath2 = ConfigurationManager.AppSettings["UploadPath"];
         IAddRecordPresenter addRecordPresenter;
         public 記一筆()
         {
@@ -37,8 +37,8 @@ namespace 記帳APP.Views
             subType_ComboBox.DataSource = dataDTO.Subcategory[dataDTO.Category[0]];
             targets_ComboBox.DataSource = dataDTO.Target;
             payment_ComboBox.DataSource = dataDTO.Payment;
-            pictureBox1.Image = Image.FromFile(upPicPath);
-            pictureBox2.Image = Image.FromFile(upPicPath);
+            pictureBox1.Image = Image.FromFile(imagePath1);
+            pictureBox2.Image = Image.FromFile(imagePath2);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
         }
@@ -53,8 +53,7 @@ namespace 記帳APP.Views
             subType_ComboBox.DataSource = Subcates;
         }
 
-        private string imagePath1 = ConfigurationManager.AppSettings["UploadPath"];
-        private string imagePath2 = ConfigurationManager.AppSettings["UploadPath"];
+
         private void ImageUpload_Click(object sender, EventArgs e)
         {
 
@@ -69,10 +68,6 @@ namespace 記帳APP.Views
             if (dialogResult == DialogResult.OK)
             {
                 pictureBox.Image = Image.FromFile(openFileDialog.FileName);
-                if (pictureBox.Name == "pictureBox1")
-                    imagePath1 = openFileDialog.FileName;
-                if (pictureBox.Name == "pictureBox2")
-                    imagePath2 = openFileDialog.FileName;
 
             }
 
@@ -95,10 +90,9 @@ namespace 記帳APP.Views
             pictureBox2.Image.Dispose();
             GC.Collect();
 
-            pictureBox1.Image = Image.FromFile(upPicPath);
-            pictureBox2.Image = Image.FromFile(upPicPath);
-            imagePath1 = upPicPath;
-            imagePath2 = upPicPath;
+            pictureBox1.Image = Image.FromFile(imagePath1);
+            pictureBox2.Image = Image.FromFile(imagePath2);
+
         }
 
     }

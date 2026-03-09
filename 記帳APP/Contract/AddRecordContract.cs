@@ -20,6 +20,7 @@ namespace 記帳APP.Contract
             void ChangeSubcatComboBox(string categoryItem);
             void GetComboBoxData();
 
+
         }
     }
 }
