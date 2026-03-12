@@ -1,4 +1,5 @@
-﻿using CSV;
+﻿using AutoMapper;
+using CSV;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,15 +9,21 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using 記帳APP.Attributes;
 using 記帳APP.Extension;
 using 記帳APP.Models;
 using 記帳APP.Models.DTOs;
 using 記帳APP.Presenter;
+using 記帳APP.Utility;
 using static 記帳APP.Contract.AccountBookContract;
+using Mapper = 記帳APP.Utility.Mapper;
+
+
 
 namespace 記帳APP.Views
 {
@@ -39,20 +46,8 @@ namespace 記帳APP.Views
         }
         void IAccountBookView.GetRecordResponse(List<AccountBookDTO> accountBookDTOs)
         {
+            recordData = Mapper.Map<AccountBookDTO, RecordModel>(accountBookDTOs);
 
-            for (int i = 0; i < accountBookDTOs.Count; i++)
-            {
-                RecordModel recordModel = new RecordModel();
-                recordModel.Date = accountBookDTOs[i].Date;
-                recordModel.Category = accountBookDTOs[i].Category;
-                recordModel.Subcategory = accountBookDTOs[i].Subcategory;
-                recordModel.Price = accountBookDTOs[i].Price;
-                recordModel.Target = accountBookDTOs[i].Target;
-                recordModel.Payment = accountBookDTOs[i].Payment;
-                recordModel.Picture1 = accountBookDTOs[i].Picture1;
-                recordModel.Picture2 = accountBookDTOs[i].Picture2;
-                recordData.Add(recordModel);
-            }
             Show_Data();
         }
 
@@ -67,7 +62,7 @@ namespace 記帳APP.Views
                 DateTime fromDate = fromDatePicker.Value;
                 DateTime toDate = toDatePicker.Value;
                 accountBookPresenter.GetRecord(fromDate, toDate);
-                
+
                 Show_Data();
             }, 400);
 
@@ -121,7 +116,6 @@ namespace 記帳APP.Views
                             dataGridView1.Rows[i].Cells[x.OwningColumn.Name].Value = new Bitmap(dataGridView1.Rows[i].Cells[x.OwningColumn.Tag.ToString()].Value.ToString());
                         }
                     });
-
             }
         }
 
@@ -130,6 +124,7 @@ namespace 記帳APP.Views
             int col = e.ColumnIndex;
             int row = e.RowIndex;
 
+            //開form 給圖片
             if (dataGridView1.Rows[row].Cells[col] is DataGridViewImageCell imageColumn && imageColumn.OwningColumn.Name != "Delete")
             {
                 string path = dataGridView1.Rows[row].Cells[imageColumn.OwningColumn.Tag.ToString()].Value.ToString();
@@ -142,26 +137,25 @@ namespace 記帳APP.Views
             if (dataGridView1.Rows[row].Cells[col] is DataGridViewImageCell deleteColumn && deleteColumn.OwningColumn.Name == "Delete")
             {
                 AccountBookDTO accountBookDTO = new AccountBookDTO();
-                accountBookDTO.Date = dataGridView1.Rows[row].Cells["Date"].Value.ToString();
-                accountBookDTO.Category = dataGridView1.Rows[row].Cells["Category"].Value.ToString();
-                accountBookDTO.Subcategory = dataGridView1.Rows[row].Cells["Subcategory"].Value.ToString();
-                accountBookDTO.Price = dataGridView1.Rows[row].Cells["Price"].Value.ToString();
-                accountBookDTO.Target = dataGridView1.Rows[row].Cells["Target"].Value.ToString();
-                accountBookDTO.Payment = dataGridView1.Rows[row].Cells["Payment"].Value.ToString();
-                accountBookDTO.Picture1 = dataGridView1.Rows[row].Cells["Picture1"].Value.ToString();
-                accountBookDTO.Picture2 = dataGridView1.Rows[row].Cells["Picture2"].Value.ToString();
+                //dataGridView1.GetType().GetProperty(Name);
+                PropertyInfo[] theProperty = typeof(RecordModel).GetProperties();
+                theProperty.ToList()
+                           .ForEach(x =>
+                           {
+                               PropertyInfo accountInfo = typeof(AccountBookDTO).GetProperty(x.Name);
+                               accountInfo.SetValue(accountBookDTO, dataGridView1.Rows[row].Cells[x.Name].Value.ToString());
+                           });
 
                 dataGridView1.Rows[row].Cells.OfType<DataGridViewImageCell>()
-                    .ToList()
-                    .ForEach(x =>
-                    {
-                        Image pic = (Image)dataGridView1.Rows[row].Cells[x.OwningColumn.Name].Value;
-                        if (pic == null)
-                            return;
-                        pic.Dispose();
-                        GC.Collect();
-                    }
-                    );
+                            .ToList()
+                            .ForEach(x =>
+                            {
+                                Image pic = (Image)dataGridView1.Rows[row].Cells[x.OwningColumn.Name].Value;
+                                if (pic == null)
+                                    return;
+                                pic.Dispose();
+                                GC.Collect();
+                            });
 
                 accountBookPresenter.DeleteRecord(accountBookDTO);
 
@@ -186,25 +180,17 @@ namespace 記帳APP.Views
                 dataGridView1.Rows[row].Cells["Subcategory_comboBox"].Value = newData[0].ToString();
             }
             AccountBookDTO accountBookDTO = new AccountBookDTO();
-            accountBookDTO.Date = dataGridView1.Rows[row].Cells["Date"].Value.ToString();
-            accountBookDTO.Category = dataGridView1.Rows[row].Cells["Category"].Value.ToString();
-            accountBookDTO.Subcategory = dataGridView1.Rows[row].Cells["Subcategory"].Value.ToString();
-            accountBookDTO.Price = dataGridView1.Rows[row].Cells["Price"].Value.ToString();
-            accountBookDTO.Target = dataGridView1.Rows[row].Cells["Target"].Value.ToString();
-            accountBookDTO.Payment = dataGridView1.Rows[row].Cells["Payment"].Value.ToString();
-            accountBookDTO.Picture1 = dataGridView1.Rows[row].Cells["Picture1"].Value.ToString();
-            accountBookDTO.Picture2 = dataGridView1.Rows[row].Cells["Picture2"].Value.ToString();
+
+            PropertyInfo[] properties = typeof(AccountBookDTO).GetProperties();
+            properties.ToList()
+                      .ForEach(x =>
+                      {
+                          PropertyInfo info = typeof(RecordModel).GetProperty(x.Name);
+                          x.SetValue(accountBookDTO, dataGridView1.Rows[row].Cells[info.Name].Value.ToString());
+                      });
+
 
             accountBookPresenter.UpdateRecord(accountBookDTO);
-
-            //File.Delete(Path.Combine(directoryPath, date, "data.csv"));
-            //List<RecordModel> newRecord = recordData.Where(x => x.Date == date).ToList();
-
-            //if (newRecord.Count > 0)
-            //{
-            //    CSVHelper.Write(Path.Combine(directoryPath, date, "data.csv"), newRecord);
-            //}
-
         }
 
         // Source - https://stackoverflow.com/a

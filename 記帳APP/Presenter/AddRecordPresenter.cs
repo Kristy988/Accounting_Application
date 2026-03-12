@@ -29,11 +29,8 @@ namespace 記帳APP.Presenter
         public void GetComboBoxData()
         {
             DataDAO dataDAO = dataRepository.GetData();
-            DataDTO dataDTO = new DataDTO();
-            dataDTO.Category = dataDAO.Category;
-            dataDTO.Subcategory = dataDAO.Subcategory;
-            dataDTO.Target = dataDAO.Target;
-            dataDTO.Payment = dataDAO.Payment;
+            DataDTO dataDTO = Mapper.Map<DataDAO, DataDTO>(dataDAO);
+
             view.GetComboBoxDataResponse(dataDTO);
 
         }
@@ -49,15 +46,11 @@ namespace 記帳APP.Presenter
                 Directory.CreateDirectory(folderPath);
             }
 
-            RecordDAO recordDAO = new RecordDAO();
-            recordDAO.Date = recordDTO.Date;
-            recordDAO.Category = recordDTO.Category;
-            recordDAO.Price = recordDTO.Price;
-            recordDAO.Subcategory = recordDTO.Subcategory;
-            recordDAO.Target = recordDTO.Target;
-            recordDAO.Payment = recordDTO.Payment;
-            recordDAO.Picture1 = SaveImage(folderPath, recordDTO.Picture1);
-            recordDAO.Picture2 = SaveImage(folderPath, recordDTO.Picture2);
+            RecordDAO recordDAO = Mapper.Map<RecordDTO, RecordDAO>(recordDTO, x =>
+            {
+                x.ForMember(y => y.Picture1, z => z.MapFrom(o => SaveImage(folderPath, recordDTO.Picture1)))
+                 .ForMember(y => y.Picture2, z => z.MapFrom(o => SaveImage(folderPath, recordDTO.Picture2)));
+            });
             recordRepository.CreateRecord(recordDAO);
         }
         public string SaveImage(string folderPath, Image pic)

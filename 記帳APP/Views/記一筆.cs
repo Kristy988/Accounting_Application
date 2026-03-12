@@ -1,5 +1,6 @@
 ﻿using CSV;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -9,6 +10,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -76,14 +78,30 @@ namespace 記帳APP.Views
         private void button1_Click(object sender, EventArgs e)
         {
             RecordDTO data = new RecordDTO();
-            data.Date = dateTimePicker1.Value.ToString("yyyy-MM-dd");
-            data.Price = price_TextBox.Text;
-            data.Category = type_ComboBox.Text;
-            data.Subcategory = subType_ComboBox.Text;
-            data.Target = targets_ComboBox.Text;
-            data.Payment = payment_ComboBox.Text;
-            data.Picture1 = pictureBox1.Image;
-            data.Picture2 = pictureBox2.Image;
+            //data.Date = dateTimePicker1.Value.ToString("yyyy-MM-dd");
+            panel1.Controls.OfType<Control>()
+                           .ToList()
+                           .ForEach(x =>
+                           {
+                               PropertyInfo propertyInfo = typeof(RecordDTO).GetProperty(x.Tag.ToString());
+                               if (x is DateTimePicker)
+                               {
+                                   propertyInfo.SetValue(data, ((DateTimePicker)x).Value.ToString("yyyy-MM-dd"));
+                               }
+                               if (x is TextBox)
+                               {
+                                   propertyInfo.SetValue(data, x.Text);
+                               }
+                               if (x is ComboBox)
+                               {
+                                   propertyInfo.SetValue(data, x.Text);
+                               }
+                               if (x is PictureBox)
+                               {
+                                   propertyInfo.SetValue(data, ((PictureBox)x).Image);
+                               }
+                           });
+
             addRecordPresenter.CreateRecord(data);
             MessageBox.Show("新增成功");
             pictureBox1.Image.Dispose();

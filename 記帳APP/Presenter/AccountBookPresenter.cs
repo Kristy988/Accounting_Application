@@ -25,34 +25,15 @@ namespace 記帳APP.Presenter
         {
             RecordRepository recordRepository = new RecordRepository();
             List<RecordDAO> recordDAOs = recordRepository.GetRecords(fromDate, toDate);
-            List<AccountBookDTO> accountBookDTOs = new List<AccountBookDTO>();
-            for (int i = 0; i < recordDAOs.Count; i++)
-            {
-                AccountBookDTO accountBookDTO = new AccountBookDTO();
-                accountBookDTO.Date = recordDAOs[i].Date;
-                accountBookDTO.Category = recordDAOs[i].Category;
-                accountBookDTO.Subcategory = recordDAOs[i].Subcategory;
-                accountBookDTO.Price = recordDAOs[i].Price;
-                accountBookDTO.Target = recordDAOs[i].Target;
-                accountBookDTO.Payment = recordDAOs[i].Payment;
-                accountBookDTO.Picture1 = recordDAOs[i].Picture1;
-                accountBookDTO.Picture2 = recordDAOs[i].Picture2;
-                accountBookDTOs.Add(accountBookDTO);
-            }
+            List<AccountBookDTO> accountBookDTOs = Mapper.Map<RecordDAO, AccountBookDTO>(recordDAOs);
+
             accountBookView.GetRecordResponse(accountBookDTOs);
         }
 
         public void DeleteRecord(AccountBookDTO accountBookDTO)
         {
-            RecordDAO recordDAO = new RecordDAO();
-            recordDAO.Date = accountBookDTO.Date;
-            recordDAO.Category = accountBookDTO.Category;
-            recordDAO.Subcategory = accountBookDTO.Subcategory;
-            recordDAO.Price = accountBookDTO.Price;
-            recordDAO.Target = accountBookDTO.Target;
-            recordDAO.Payment = accountBookDTO.Payment;
-            recordDAO.Picture1 = accountBookDTO.Picture1;
-            recordDAO.Picture2 = accountBookDTO.Picture2;
+            RecordDAO recordDAO = Mapper.Map<AccountBookDTO, RecordDAO>(accountBookDTO);
+
 
             File.Delete(accountBookDTO.Picture1);
             File.Delete(accountBookDTO.Picture2);
@@ -68,15 +49,8 @@ namespace 記帳APP.Presenter
 
         public void UpdateRecord(AccountBookDTO accountBookDTO)
         {
-            RecordDAO recordDAO = new RecordDAO();
-            recordDAO.Date = accountBookDTO.Date;
-            recordDAO.Category = accountBookDTO.Category;
-            recordDAO.Subcategory = accountBookDTO.Subcategory;
-            recordDAO.Price = accountBookDTO.Price;
-            recordDAO.Target = accountBookDTO.Target;
-            recordDAO.Payment = accountBookDTO.Payment;
-            recordDAO.Picture1 = accountBookDTO.Picture1;
-            recordDAO.Picture2 = accountBookDTO.Picture2;
+            RecordDAO recordDAO = Mapper.Map<AccountBookDTO, RecordDAO>(accountBookDTO);
+
 
             RecordRepository recordRepository = new RecordRepository();
             recordRepository.UpdateRecord(recordDAO);
