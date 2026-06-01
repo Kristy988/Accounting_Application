@@ -49,10 +49,10 @@ namespace 記帳APP.Presenter
                     attributeAfterFilter.ForEach(y =>
                     {
                         string title = y.GetCustomAttribute<DisplayNameAttribute>().DisplayName;
-                        
+
                         if (title.Contains("目的"))
                             title = y.GetCustomAttribute<DisplayNameAttribute>().DisplayName + x.Category;
-                        
+
                         //比對屬性是否存在於filter,且欄位不是類型
                         if (filters.ContainsKey(title) && title != "類型")
                         {
@@ -69,44 +69,44 @@ namespace 記帳APP.Presenter
             else
                 newList = analyzeDTOs.ToList();
 
-
-            var con1 = groups.First();
-            var con2 = groups.Last();
-            var resultList = newList.GroupBy(x =>
+            var resultList = new List<ShowAnalyzeDTO>();
+            if (groups.Count != 0)
             {
-                string conA = "";
-                string conB = "";
-                if (con1 == "類型")
-                    conA = x.Category;
-                else if (con1.Contains("目的"))
-                    conA = x.Subcategory;
-                else if (con1 == "對象")
-                    conA = x.Target;
-                else if (con1 == "方式")
-                    conA = x.Payment;
-
-                if (con2 == "類型")
-                    conB = x.Category;
-                else if (con2.Contains("目的"))
-                    conB = x.Subcategory;
-                else if (con2 == "對象")
-                    conB = x.Target;
-                else if (con2 == "方式")
-                    conB = x.Payment;
-
-                return $"{conA}/{conB}";
-            })
-                .Select(x =>
+                resultList = newList.GroupBy(x =>
                 {
-                    var priceSum = x.Sum(y => int.Parse(y.Price));
-                    var result = new ShowAnalyzeDTO
+                    string theGroup = "";
+                    attributeAfterFilter.ForEach(y =>
                     {
-                        Price = priceSum.ToString(),
-                        Title = x.Key,
-                    };
-                    return result;
-                }).ToList();
+                        string title = y.GetCustomAttribute<DisplayNameAttribute>().DisplayName;
 
+                        //假如有這個群組的話
+                        if (groups.Contains(title))
+                        {
+                            theGroup += y.GetValue(x).ToString() + "/";
+                        }
+                    });
+                    theGroup = theGroup.TrimEnd('/');
+
+                    return theGroup;
+                }).Select(x =>
+                    {
+                        var priceSum = x.Sum(y => int.Parse(y.Price));
+                        var result = new ShowAnalyzeDTO
+                        {
+                            Price = priceSum.ToString(),
+                            Title = x.Key,
+                        };
+                        return result;
+                    }).ToList();
+            }
+            else
+            {
+                int sum = newList.Sum(x => int.Parse(x.Price));
+                ShowAnalyzeDTO item = new ShowAnalyzeDTO();
+                item.Price = sum.ToString();
+                item.Title = "總計";
+                resultList.Add(item);
+            }
 
 
 
