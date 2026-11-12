@@ -34,7 +34,7 @@ namespace 記帳APP.Views
         public 帳務分析()
         {
             InitializeComponent();
-            analyzePresenter = new AnaylzePresneter(this);
+            analyzePresenter = new AnaylzePresenter(this);
             flowLayoutPanel1.GroupCheckBoxGenerated(OnCheckGroups, OnCheckFilters);
             flowLayoutPanel2.CheckBoxGenerated(OnCheckGroups, OnCheckFilters);
         }
@@ -122,7 +122,6 @@ namespace 記帳APP.Views
             dataGridView1.Columns.Clear();
             dataGridView1.DataSource = recordData;
             PropertyInfo[] theProperty = typeof(ShowAnalyzeDTO).GetProperties();
-
 
         }
 

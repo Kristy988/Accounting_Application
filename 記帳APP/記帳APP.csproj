@@ -45,6 +45,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,6 +59,10 @@
   <ItemGroup>
     <Compile Include="Attributes\ComboBoxColumnAttribute.cs" />
     <Compile Include="Attributes\ImageColumnAttribute.cs" />
+    <Compile Include="Builders\ABuilder.cs" />
+    <Compile Include="Builders\Lines_Builder.cs" />
+    <Compile Include="Builders\Pie_Builder.cs" />
+    <Compile Include="Builders\Stack_Builder.cs" />
     <Compile Include="Components\Navbar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -67,6 +72,7 @@
     <Compile Include="Contract\AddRecordContract.cs" />
     <Compile Include="Contract\AccountBookContract.cs" />
     <Compile Include="Contract\AnalyzeContract.cs" />
+    <Compile Include="Contract\ChartContract.cs" />
     <Compile Include="Extension\CheckboxExtension.cs" />
     <Compile Include="Extension\DataGridViewExtension.cs" />
     <Compile Include="Extension\FormExtension.cs" />
@@ -76,9 +82,13 @@
     <Compile Include="Models\DTOs\DataDTO.cs" />
     <Compile Include="Models\DTOs\RecordDTO.cs" />
     <Compile Include="Models\DTOs\ShowAnalyzeDTO.cs" />
+    <Compile Include="Models\LineChartModel.cs" />
+    <Compile Include="Models\StackColumnModel.cs" />
     <Compile Include="Presenter\AccountBookPresenter.cs" />
     <Compile Include="Presenter\AddRecordPresenter.cs" />
-    <Compile Include="Presenter\AnaylzePresneter.cs" />
+    <Compile Include="Presenter\AnaylzePresenter.cs" />
+    <Compile Include="Presenter\ChartPresenter.cs" />
+    <Compile Include="Presenter\Service\AnalyzeService.cs" />
     <Compile Include="Repository\DataRepository.cs" />
     <Compile Include="Repository\IDataRepository.cs" />
     <Compile Include="Repository\Model\DataDAO.cs" />

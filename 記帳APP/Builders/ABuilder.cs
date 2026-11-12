@@ -5,31 +5,42 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 using 記帳APP.Models;
 using 記帳APP.Models.DTOs;
 using 記帳APP.Repository;
 using 記帳APP.Utility;
-using static 記帳APP.Contract.AccountBookContract;
-using static 記帳APP.Contract.AnalyzeContract;
 
-namespace 記帳APP.Presenter
+
+namespace 記帳APP.Builders
 {
-    internal class AnaylzePresneter : IAnalyzePresenter
-
+    internal abstract class ABuilder
     {
-        IAnalyzeView analyzeView;
-        public AnaylzePresneter(IAnalyzeView analyzeView)
+        private List<RecordDAO> recordDAOs;
+        protected DateTime fromDate;
+        protected DateTime toDate;
+        protected List<AnalyzeDTO> newList;
+        protected List<PropertyInfo> attributeAfterFilter = typeof(AnalyzeDTO).GetProperties().Where(x => x.GetCustomAttribute<DisplayNameAttribute>() != null).ToList();
+        protected List<string> groups;
+        protected Dictionary<string, List<string>> filters;
+
+        //給圖表用
+        public virtual ABuilder SetDateRange(DateTime fromDate, DateTime toDate)
         {
-            this.analyzeView = analyzeView;
-        }
-        public void GetRecord(DateTime fromDate, DateTime toDate, List<string> groups, Dictionary<string, List<string>> filters)
-        {
+            this.fromDate = fromDate;
+            this.toDate = toDate;
             RecordRepository recordRepository = new RecordRepository();
-            List<RecordDAO> recordDAOs = recordRepository.GetRecords(fromDate, toDate);
+            recordDAOs = recordRepository.GetRecords(fromDate, toDate);
+            return this;
+        }
+        public virtual ABuilder SetFilter(List<string> groups, Dictionary<string, List<string>> filters)
+        {
+            this.filters = filters;
             IEnumerable<AnalyzeDTO> analyzeDTOs = Mapper.Map<RecordDAO, AnalyzeDTO>(recordDAOs);
             //篩選有DisplayName的屬性
             var attributeAfterFilter = typeof(AnalyzeDTO).GetProperties().Where(x => x.GetCustomAttribute<DisplayNameAttribute>() != null).ToList();
-            List<AnalyzeDTO> newList = new List<AnalyzeDTO>();
+            newList = new List<AnalyzeDTO>();
+            this.groups = groups;
 
             if (filters.Count != 0)
             {
@@ -68,51 +79,13 @@ namespace 記帳APP.Presenter
             }
             else
                 newList = analyzeDTOs.ToList();
-
-            var resultList = new List<ShowAnalyzeDTO>();
-            if (groups.Count != 0)
-            {
-                resultList = newList.GroupBy(x =>
-                {
-                    string theGroup = "";
-                    attributeAfterFilter.ForEach(y =>
-                    {
-                        string title = y.GetCustomAttribute<DisplayNameAttribute>().DisplayName;
-
-                        //假如有這個群組的話
-                        if (groups.Contains(title))
-                        {
-                            theGroup += y.GetValue(x).ToString() + "/";
-                        }
-                    });
-                    theGroup = theGroup.TrimEnd('/');
-
-                    return theGroup;
-                }).Select(x =>
-                    {
-                        var priceSum = x.Sum(y => int.Parse(y.Price));
-                        var result = new ShowAnalyzeDTO
-                        {
-                            Price = priceSum.ToString(),
-                            Title = x.Key,
-                        };
-                        return result;
-                    }).ToList();
-            }
-            else
-            {
-                int sum = newList.Sum(x => int.Parse(x.Price));
-                ShowAnalyzeDTO item = new ShowAnalyzeDTO();
-                item.Price = sum.ToString();
-                item.Title = "總計";
-                resultList.Add(item);
-            }
-
-
-
-            analyzeView.GetRecordResponse(resultList);
+            return this;
         }
-
-
+        public virtual ABuilder SetPeriod(string period = "none")
+        {
+            return this;
+        }
+        public abstract ABuilder GetRecord();
+        public abstract Chart BuildPattern();
     }
 }
