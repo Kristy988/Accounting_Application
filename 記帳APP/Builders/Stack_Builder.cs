@@ -13,6 +13,8 @@ using 記帳APP.Presenter.Service;
 
 namespace 記帳APP.Builders
 {
+    [DisplayName("堆疊圖")]
+
     internal class Stack_Builder : ABuilder
     {
         private Dictionary<string, ShowAnalyzeDTO> resultList;

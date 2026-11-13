@@ -14,16 +14,20 @@ using 記帳APP.Repository;
 
 namespace 記帳APP.Builders
 {
+    [DisplayName("折線圖")]
+
     internal class Lines_Builder : ABuilder
     {
+
         private List<ShowAnalyzeDTO> resultList = new List<ShowAnalyzeDTO>();
         private List<ShowAnalyzeDTO> resultList2 = new List<ShowAnalyzeDTO>();
 
-        public override ABuilder GetRecord()
+        private List<ShowAnalyzeDTO> InitialGetList()
         {
+            List<ShowAnalyzeDTO> theList = new List<ShowAnalyzeDTO>();
             if (groups.Count != 0)
             {
-                resultList = newList.GroupBy(x => x.Date).Select(x =>
+                theList = newList.GroupBy(x => x.Date).Select(x =>
                 {
                     var priceSum = x.Sum(y => int.Parse(y.Price));
                     var result = new ShowAnalyzeDTO
@@ -40,68 +44,32 @@ namespace 記帳APP.Builders
                 ShowAnalyzeDTO item = new ShowAnalyzeDTO();
                 item.Price = sum.ToString();
                 item.Title = "總計";
-                resultList.Add(item);
+                theList.Add(item);
             }
-
+            return theList;
+        }
+        public override ABuilder GetRecord()
+        {
+            resultList = InitialGetList();
             return this;
         }
 
         public override ABuilder SetPeriod(string period)
         {
-            if (period == "Week")
+            if (period == "上週同期")
             {
                 SetDateRange(fromDate.AddDays(-7), toDate.AddDays(-7));
-                SetFilter(groups, filters);
-                if (groups.Count != 0)
-                {
-                    resultList2 = newList.GroupBy(x => x.Date).Select(x =>
-                    {
-                        var priceSum = x.Sum(y => int.Parse(y.Price));
-                        var result = new ShowAnalyzeDTO
-                        {
-                            Date = x.Key,
-                            Price = priceSum.ToString(),
-                        };
-                        return result;
-                    }).ToList();
-                }
-                else
-                {
-                    int sum = newList.Sum(x => int.Parse(x.Price));
-                    ShowAnalyzeDTO item = new ShowAnalyzeDTO();
-                    item.Price = sum.ToString();
-                    item.Title = "總計";
-                    resultList2.Add(item);
-                }
             }
-            else if (period == "Month")
+
+            else if (period == "上月同期")
             {
                 SetDateRange(fromDate.AddMonths(-1), toDate.AddMonths(-1));
-                SetFilter(groups, filters);
-                if (groups.Count != 0)
-                {
-                    resultList2 = newList.GroupBy(x => x.Date).Select(x =>
-                    {
-                        var priceSum = x.Sum(y => int.Parse(y.Price));
-                        var result = new ShowAnalyzeDTO
-                        {
-                            Date = x.Key,
-                            Price = priceSum.ToString(),
-                        };
-                        return result;
-                    }).ToList();
-                }
-                else
-                {
-                    int sum = newList.Sum(x => int.Parse(x.Price));
-                    ShowAnalyzeDTO item = new ShowAnalyzeDTO();
-                    item.Price = sum.ToString();
-                    item.Title = "總計";
-                    resultList2.Add(item);
-                }
             }
+            SetFilter(groups, filters);
+            resultList2 = InitialGetList();
             return this;
         }
+
 
         public override Chart BuildPattern()
         {

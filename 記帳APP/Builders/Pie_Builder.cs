@@ -11,6 +11,7 @@ using 記帳APP.Models.DTOs;
 
 namespace 記帳APP.Builders
 {
+    [DisplayName("圓餅圖")]
     internal class Pie_Builder : ABuilder
     {
         private List<ShowAnalyzeDTO> resultList = new List<ShowAnalyzeDTO>();
